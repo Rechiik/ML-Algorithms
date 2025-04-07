@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 typedef struct{
@@ -37,6 +38,13 @@ float costFunction(regressionEq eq, float x[], float Y[], int m){
 }
 
 
+float *predict(regressionEq eq, float x[], int m){
+	float* yHat = malloc(m * sizeof(float));
+	for (int i=0;i<m;i++){
+		yHat[i] = eq.m*x[i] + eq.c;
+	}
+	return yHat;
+}
 int main(){
 	regressionEq eq = {.c = 1.5,.m=1};
 	float x[] = {0,1,2,3,4,5};
@@ -50,8 +58,16 @@ int main(){
 		gradientDescent(&eq, x, Y, m, 0.01);
 		counter++;
 		cost = costFunction(eq, x, Y,m);
+		if (counter%10==0){
 		printf("Cost at epoch %d: %f\n",counter,cost);
-		printf("Value of 0_0: %f\nValue of 0_1: %f\n",eq.c,eq.m);
+		printf("Value of theta_0: %f\nValue of theta_1: %f\n",eq.c,eq.m);
+		}
 	}
+	float testX[] = {5.0,20.0,11.0};
+	int n =3;
+	float *yPred = predict(eq, testX, n);
+	for (int i=0;i<n;i++){
+		printf("PREDICTED VALUES FOR X = %f IS y=%f\n",testX[i],*(yPred+i));
+	}	
 	return 0;
 }
